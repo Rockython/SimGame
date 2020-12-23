@@ -1,0 +1,8 @@
+C:\godotProjects\SimGame\SimGame\.mono\temp\obj\Debug\SimGame.csprojAssemblyReference.cache
+C:\godotProjects\SimGame\SimGame\.mono\temp\obj\Debug\SimGame.AssemblyInfoInputs.cache
+C:\godotProjects\SimGame\SimGame\.mono\temp\obj\Debug\SimGame.AssemblyInfo.cs
+C:\godotProjects\SimGame\SimGame\.mono\temp\obj\Debug\SimGame.csproj.CoreCompileInputs.cache
+C:\godotProjects\SimGame\SimGame\.mono\temp\bin\Debug\SimGame.dll
+C:\godotProjects\SimGame\SimGame\.mono\temp\bin\Debug\SimGame.pdb
+C:\godotProjects\SimGame\SimGame\.mono\temp\obj\Debug\SimGame.dll
+C:\godotProjects\SimGame\SimGame\.mono\temp\obj\Debug\SimGame.pdb
