@@ -1,20 +1,28 @@
 using Godot;
 using SimGame;
+using SimGame.source;
 using System;
+using System.Collections.Generic;
 
-public class Spawner : Node
+public class Game : Node
 {
 	[Export]
 	public int NumCharsToSpawn = 5000;
 	[Export]
-	public string CharsScene = "res://data/scenes/Character.tscn";
+	public int NumVegetationToSpawn = 30000;
 	private int currentId = 0;
 	public Rect2 SpawnArea = new Rect2(0, 0, 30, 30);
 	private RandomNumberGenerator random = new RandomNumberGenerator();
 	[Export]
-	public NodePath ObjectsTileMapPath;
-	[Export]
 	public NodePath GroundTileMapPath;
+
+	public static Game GetSingleton()
+	{
+		if (self == null)
+			self = new Game();
+
+		return self;
+	}
 
 	public override void _Ready()
 	{
@@ -27,33 +35,38 @@ public class Spawner : Node
 			for (int j = 0; j < consts.MapSize; j++)
 				tileMap.SetCell(i, j, 0);
 
-
 		// Spawning characters
-		var scene = (PackedScene)ResourceLoader.Load(CharsScene);
 		for (int i = 0; i < NumCharsToSpawn; i++)
 		{
-			var instance = scene.Instance();
-			var character = (Character)instance;
-			DebugTools.Assert(character != null, "Invalid type");
-			character.Id = currentId++;
-			character.ChessLocation = GetRandomPosition(SpawnArea);
-			AddChild(instance);
+			var creature = new Animal(currentId++, this);
+			creature.ChessLocation = GetRandomPosition(SpawnArea);
+			creatures.Add(creature);
 		}
 
 		// Spawning vegetation
-		tileMap = GetNode<TileMap>(ObjectsTileMapPath);
-		DebugTools.Assert(tileMap != null, "No tilemap");
-		for (int i = 0; i < 100000; i++)
+		for (int i = 0; i < NumVegetationToSpawn; i++)
 		{
-			var pos = GetRandomPosition(SpawnArea);
-			tileMap.SetCell((int)pos.x, (int)pos.y, 0);
+			var creature = new Vegetation(currentId++, this);
+			creature.ChessLocation = GetRandomPosition(SpawnArea);
+			creatures.Add(creature);
 		}
-		tileMap.UpdateBitmaskRegion();
 	}
+
+	public override void _Process(float delta)
+    {
+		Creature[] creaturesCopy = new Creature[creatures.Count];
+		creatures.CopyTo(creaturesCopy);
+		foreach (var creature in creaturesCopy)
+			creature.Update(delta);
+    }
 
 	private Vector2 GetRandomPosition(Rect2 rect)
 	{
 		return new Vector2(random.RandiRange((int)rect.Position.x, (int)rect.Position.x + (int)rect.Size.x),
 							random.RandiRange((int)rect.Position.y, (int)rect.Position.y + (int)rect.Size.y));
 	}
+
+	private static Game self = null;
+	private List<Creature> creatures = new List<Creature>();
+	public List<Creature> Creatures { get { return creatures; } }
 }

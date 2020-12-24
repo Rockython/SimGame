@@ -12,6 +12,8 @@ public class Consts : Node
 	public float MaxZoom = 8.0f;
 	[Export]
 	public float MinZoom = 1.0f;
+	[Export]
+	public float Starvation = 40.0f;
 
 	public override void _Ready()
 	{
