@@ -18,14 +18,12 @@ public class Game : Node
 
 	public static Game GetSingleton()
 	{
-		if (self == null)
-			self = new Game();
-
 		return self;
 	}
 
 	public override void _Ready()
 	{
+		self = this;
 		var consts = Consts.GetSingleton();
 		SpawnArea = new Rect2(0, 0, consts.MapSize, consts.MapSize);
 
@@ -57,7 +55,8 @@ public class Game : Node
 		Creature[] creaturesCopy = new Creature[creatures.Count];
 		creatures.CopyTo(creaturesCopy);
 		foreach (var creature in creaturesCopy)
-			creature.Update(delta);
+			if (!creature.MarkedForDelete)
+				creature.Update(delta);
     }
 
 	private Vector2 GetRandomPosition(Rect2 rect)
@@ -65,6 +64,12 @@ public class Game : Node
 		return new Vector2(random.RandiRange((int)rect.Position.x, (int)rect.Position.x + (int)rect.Size.x),
 							random.RandiRange((int)rect.Position.y, (int)rect.Position.y + (int)rect.Size.y));
 	}
+
+	public Vector2 WorldClamp(Vector2 v)
+    {
+		var consts = Consts.GetSingleton();
+		return new Vector2(Mathf.Clamp(v.x, 0.0f, consts.MapSize), Mathf.Clamp(v.y, 0.0f, consts.MapSize));
+    }
 
 	private static Game self = null;
 	private List<Creature> creatures = new List<Creature>();
