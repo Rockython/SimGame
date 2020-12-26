@@ -18,6 +18,7 @@ namespace SimGame.source
             set
             {
                 Location = value + new Vector2(0.5f, 0.5f);
+                UpdatePosition();
                 OnChessLocationSet();
             }
         }
@@ -40,7 +41,7 @@ namespace SimGame.source
             rootNode.AddChild(character);
         }
 
-        public void Destroy()
+        public virtual void Destroy()
         {
             if (MarkedForDelete)
                 return;
@@ -53,12 +54,15 @@ namespace SimGame.source
 
         public virtual void Update(float dt)
         {
-            character.Position = Location * Consts.GetSingleton().CellSize;
+            UpdatePosition();
         }
 
+        protected void UpdatePosition()
+        {
+            character.Position = Location * Consts.GetSingleton().CellSize;
+        }
         protected virtual void OnChessLocationSet()
         {
-
         }
     }
 }

@@ -15,5 +15,32 @@ namespace SimGame.source
             var animres = (SpriteFrames)ResourceLoader.Load("res://data/scenes/Bush.tres");
             character.Frames = animres;
         }
+
+        public override void Destroy()
+        {
+            base.Destroy();
+
+            Game.GetSingleton().SetVegeAt(ChessLocation, false);
+        }
+
+        public override void Update(float dt)
+        {
+            if (random.Randi() % Consts.GetSingleton().VegeGrowthProb == 0)
+            {
+                var game = Game.GetSingleton();
+                Vector2[] dirs = { new Vector2(0, 1), new Vector2(0, -1), new Vector2(1, 0), new Vector2(-1, 0) };
+                int i = random.RandiRange(0, 3);
+                var pos = ChessLocation + dirs[i];
+                if (game.IsValidPosition(pos) && !game.IsVegeAt(pos))
+                {
+                    var creature = new Vegetation(game.NextId, game);
+                    creature.ChessLocation = pos;
+                    game.SetVegeAt(pos, true);
+                    game.Creatures.Add(creature);
+                }
+            }
+
+            base.Update(dt);
+        }
     }
 }

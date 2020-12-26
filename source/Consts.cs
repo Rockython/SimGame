@@ -14,6 +14,8 @@ public class Consts : Node
 	public float MinZoom = 1.0f;
 	[Export]
 	public float Starvation = 40.0f;
+	[Export]
+	public int VegeGrowthProb = 10000;
 
 	public override void _Ready()
 	{
