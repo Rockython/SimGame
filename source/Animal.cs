@@ -14,16 +14,30 @@ namespace SimGame.source
         public float Satiety { get; set; } = 100.0f;
         public float Speed { get; set; } = 0.95f;
 
-        public Animal(int id, Node root)
-            : base(id, root)
+        public enum EGender
+        {
+            Male,
+            Female
+        }
+
+        public EGender Gender { get; set; } = EGender.Male;
+
+        public bool IsInLoveMood(ulong currentTime) 
+        { 
+            return Satiety > Consts.GetSingleton().LoveLevel && (currentTime - LastSexTime) > Consts.GetSingleton().SexBreak; 
+        }
+        public ulong LastSexTime { get; set; } = 0;
+
+        public Animal()
         {
             Satiety = random.RandfRange(30.0f, 100.0f);
             satietyNode = character.GetNode<Polygon2D>("Satiety");
             DebugTools.Assert(satietyNode != null, "No satiety visual");
             satietyNode.Visible = true;
+            Gender = (EGender)random.RandiRange(0, 1);
         }
 
-        public void WalkToward(Vector2 dir)
+        private void WalkToward(Vector2 dir)
         {
             DebugTools.Assert(dir.Length() <= 1.0f, "Too far");
             walkToNeighbour = ChessLocation + new Vector2(0.5f, 0.5f) + dir;
@@ -47,7 +61,7 @@ namespace SimGame.source
                 return;
             }
 
-            if (Satiety < Consts.GetSingleton().Starvation)
+            if (Satiety < Consts.GetSingleton().StarvationLevel)
             {
                 Creature closestFood = null;
                 satietyNode.Color = Color.Color8(255, 0, 0);
@@ -73,6 +87,39 @@ namespace SimGame.source
                 }
                 if (closestFood != null)
                     WalkTo(closestFood.ChessLocation);
+            }
+            else if (IsInLoveMood(OS.GetUnixTime()))
+            {
+                Animal closestSexPartner = null;
+                satietyNode.Color = Color.Color8(0, 0, 255);
+                foreach (var creature in Game.GetSingleton().Creatures)
+                {
+                    var animal = creature as Animal;
+                    if (animal != null && animal != this)
+                    {
+                        if (animal.Gender != Gender && animal.IsInLoveMood(OS.GetUnixTime()))
+                        {
+                            float dist = animal.ChessLocation.DistanceSquaredTo(ChessLocation);
+                            if (dist == 0.0f)
+                            {
+                                var child = new Animal();
+                                child.ChessLocation = ChessLocation;
+                                closestSexPartner = null;
+                                LastSexTime = OS.GetUnixTime();
+                                animal.LastSexTime = OS.GetUnixTime();
+                                child.LastSexTime = OS.GetUnixTime();
+                                break;
+                            }
+
+                            if (closestSexPartner == null)
+                                closestSexPartner = animal;
+                            else if (dist < closestSexPartner.ChessLocation.DistanceSquaredTo(ChessLocation))
+                                closestSexPartner = animal;
+                        }
+                    }
+                }
+                if (closestSexPartner != null)
+                    WalkTo(closestSexPartner.ChessLocation);
             }
             else
             {

@@ -31,14 +31,16 @@ namespace SimGame.source
         protected RandomNumberGenerator random = new RandomNumberGenerator();
         protected Character character = null;
 
-        public Creature(int id, Node rootNode)
+        public Creature()
         {
-            Id = id;
+            var game = Game.GetSingleton();
+            Id = game.NextId;
             random.Seed = (ulong)Id;
             var characterScene = (PackedScene)ResourceLoader.Load("res://data/scenes/Character.tscn");
             character = (Character)characterScene.Instance();
             DebugTools.Assert(character != null, "Invalid type");
-            rootNode.AddChild(character);
+            game.AddChild(character);
+            game.Creatures.Add(this);
         }
 
         public virtual void Destroy()

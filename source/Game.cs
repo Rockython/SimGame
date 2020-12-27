@@ -37,9 +37,8 @@ public class Game : Node
 		// Spawning characters
 		for (int i = 0; i < NumCharsToSpawn; i++)
 		{
-			var creature = new Animal(NextId, this);
+			var creature = new Animal();
 			creature.ChessLocation = GetRandomPosition(SpawnArea);
-			creatures.Add(creature);
 		}
 
 		// Spawning vegetation
@@ -54,10 +53,9 @@ public class Game : Node
 			var pos = GetRandomPosition(SpawnArea);
 			if (!IsVegeAt(pos)) 
 			{
-				var creature = new Vegetation(NextId, this);
+				var creature = new Vegetation();
 				creature.ChessLocation = pos;
 				SetVegeAt(pos, true);
-				creatures.Add(creature);
 			}
 		}
 	}
