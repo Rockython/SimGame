@@ -37,7 +37,13 @@ public class Game : Node
 		// Spawning characters
 		for (int i = 0; i < NumCharsToSpawn; i++)
 		{
-			var creature = new Animal();
+			Creature creature = null;
+			int type_i = random.RandiRange(0, 1);
+			if (type_i == 0)
+				creature = new Lion();
+			else
+				creature = new Goat();
+
 			creature.ChessLocation = GetRandomPosition(SpawnArea);
 		}
 

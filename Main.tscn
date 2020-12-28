@@ -26,7 +26,7 @@
 
 [node name="Consts" type="Node" parent="."]
 script = ExtResource( 6 )
-MapSize = 50
+MapSize = 100
 
 [node name="Tiles" type="Node2D" parent="."]
 
@@ -51,6 +51,6 @@ script = ExtResource( 7 )
 
 [node name="Game" type="Node" parent="."]
 script = ExtResource( 1 )
-NumCharsToSpawn = 80
-NumVegetationToSpawn = 700
+NumCharsToSpawn = 500
+NumVegetationToSpawn = 2500
 GroundTileMapPath = NodePath("../Tiles/TileMapGround")

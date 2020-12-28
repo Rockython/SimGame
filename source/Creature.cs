@@ -25,7 +25,7 @@ namespace SimGame.source
 
         public Vector2 Location { get; set; }
         public int Id { get; set; }
-        public float Calories { get; set; } = 60.0f;
+        public float Calories { get; set; } = 40.0f;
         public bool MarkedForDelete { get; set; } = false;
 
         protected RandomNumberGenerator random = new RandomNumberGenerator();

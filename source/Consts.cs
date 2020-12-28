@@ -13,7 +13,7 @@ public class Consts : Node
 	[Export]
 	public float MinZoom = 1.0f;
 	[Export]
-	public float StarvationLevel = 40.0f;
+	public float StarvationLevel = 20.0f;
 	[Export]
 	public float LoveLevel = 85.0f;
 	[Export]

@@ -7,7 +7,8 @@ using Godot;
 
 namespace SimGame.source
 {
-    class Animal : Creature
+    
+    abstract class Animal<FoodType> : Creature where FoodType : Creature 
     {
         private Vector2 walkToNeighbour = new Vector2();
         private Vector2 walkToLocation = new Vector2();
@@ -35,6 +36,10 @@ namespace SimGame.source
             DebugTools.Assert(satietyNode != null, "No satiety visual");
             satietyNode.Visible = true;
             Gender = (EGender)random.RandiRange(0, 1);
+            var genderNode = character.GetNode<Sprite>("Gender");
+            DebugTools.Assert(genderNode != null, "No gender visual");
+            genderNode.Visible = true;
+            genderNode.Texture = ResourceLoader.Load<Texture>(Gender == EGender.Male ? "res://data/sprites/characters/male.png" : "res://data/sprites/characters/female.png");
         }
 
         private void WalkToward(Vector2 dir)
@@ -67,22 +72,22 @@ namespace SimGame.source
                 satietyNode.Color = Color.Color8(255, 0, 0);
                 foreach (var creature in Game.GetSingleton().Creatures)
                 {
-                    var vege = creature as Vegetation;
-                    if (vege != null)
+                    var food = creature as FoodType;
+                    if (food != null)
                     {
-                        float dist = vege.ChessLocation.DistanceSquaredTo(ChessLocation);
+                        float dist = food.ChessLocation.DistanceSquaredTo(ChessLocation);
                         if (dist == 0.0f)
                         {
-                            Satiety += vege.Calories;
+                            Satiety += food.Calories;
                             closestFood = null;
-                            vege.Destroy();
+                            food.Destroy();
                             break;
                         }
 
                         if (closestFood == null)
-                            closestFood = vege;
+                            closestFood = food;
                         else if (dist < closestFood.ChessLocation.DistanceSquaredTo(ChessLocation))
-                            closestFood = vege;
+                            closestFood = food;
                     }
                 }
                 if (closestFood != null)
@@ -90,19 +95,19 @@ namespace SimGame.source
             }
             else if (IsInLoveMood(OS.GetUnixTime()))
             {
-                Animal closestSexPartner = null;
+                Animal<FoodType> closestSexPartner = null;
                 satietyNode.Color = Color.Color8(0, 0, 255);
                 foreach (var creature in Game.GetSingleton().Creatures)
                 {
-                    var animal = creature as Animal;
+                    var animal = creature as Animal<FoodType>;
                     if (animal != null && animal != this)
                     {
-                        if (animal.Gender != Gender && animal.IsInLoveMood(OS.GetUnixTime()))
+                        if (animal.Gender != Gender && GetType() == animal.GetType() && animal.IsInLoveMood(OS.GetUnixTime()))
                         {
                             float dist = animal.ChessLocation.DistanceSquaredTo(ChessLocation);
                             if (dist == 0.0f)
                             {
-                                var child = new Animal();
+                                var child = (Animal<FoodType>)Activator.CreateInstance(GetType());
                                 child.ChessLocation = ChessLocation;
                                 closestSexPartner = null;
                                 LastSexTime = OS.GetUnixTime();
