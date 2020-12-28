@@ -7,8 +7,7 @@ using Godot;
 
 namespace SimGame.source
 {
-    
-    abstract class Animal<FoodType> : Creature where FoodType : Creature 
+    abstract class Animal<FoodType> : AnimalBase where FoodType : Creature 
     {
         private Vector2 walkToNeighbour = new Vector2();
         private Vector2 walkToLocation = new Vector2();
@@ -31,7 +30,7 @@ namespace SimGame.source
 
         public Animal()
         {
-            Satiety = random.RandfRange(30.0f, 100.0f);
+            Satiety = random.RandfRange(10.0f, 100.0f);
             satietyNode = character.GetNode<Polygon2D>("Satiety");
             DebugTools.Assert(satietyNode != null, "No satiety visual");
             satietyNode.Visible = true;
@@ -72,22 +71,25 @@ namespace SimGame.source
                 satietyNode.Color = Color.Color8(255, 0, 0);
                 foreach (var creature in Game.GetSingleton().Creatures)
                 {
-                    var food = creature as FoodType;
-                    if (food != null)
+                    if (creature != this && creature.GetType() != GetType())
                     {
-                        float dist = food.ChessLocation.DistanceSquaredTo(ChessLocation);
-                        if (dist == 0.0f)
+                        var food = creature as FoodType;
+                        if (food != null)
                         {
-                            Satiety += food.Calories;
-                            closestFood = null;
-                            food.Destroy();
-                            break;
-                        }
+                            float dist = food.ChessLocation.DistanceSquaredTo(ChessLocation);
+                            if (dist == 0.0f)
+                            {
+                                Satiety += food.Calories;
+                                closestFood = null;
+                                food.Destroy();
+                                break;
+                            }
 
-                        if (closestFood == null)
-                            closestFood = food;
-                        else if (dist < closestFood.ChessLocation.DistanceSquaredTo(ChessLocation))
-                            closestFood = food;
+                            if (closestFood == null)
+                                closestFood = food;
+                            else if (dist < closestFood.ChessLocation.DistanceSquaredTo(ChessLocation))
+                                closestFood = food;
+                        }
                     }
                 }
                 if (closestFood != null)

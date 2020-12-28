@@ -61,7 +61,10 @@ namespace SimGame.source
 
         protected void UpdatePosition()
         {
-            character.Position = Location * Consts.GetSingleton().CellSize;
+            if (!MarkedForDelete)
+            {
+                character.Position = Location * Consts.GetSingleton().CellSize;
+            }
         }
         protected virtual void OnChessLocationSet()
         {

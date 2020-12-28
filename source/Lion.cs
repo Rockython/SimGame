@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace SimGame.source
 {
-    class Lion : Animal<Animal<Vegetation>>
+    class Lion : Animal<AnimalBase>
     {
         public Lion()
         {
